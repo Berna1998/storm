@@ -142,7 +142,7 @@ public class TridentJmsSpout implements ITridentSpout<JmsBatch> {
     }
 
     @Override
-    public ITridentSpout.BatchCoordinator<JmsBatch> getCoordinator(
+    public BatchCoordinator<JmsBatch> getCoordinator(
         String txStateId, Map<String, Object> conf, TopologyContext context) {
         return new JmsBatchCoordinator(name);
     }

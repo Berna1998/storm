@@ -133,7 +133,7 @@ public class Config extends HashMap<String, Object> {
      * Whether to enable backpressure in for a certain topology.
      * Note: Retained for enabling transition from 1.x. Will be removed soon.
      */
-    @Deprecated(forRemoval = true, since = "2.0.0")
+    @Deprecated
     @IsBoolean
     public static final String TOPOLOGY_BACKPRESSURE_ENABLE = "topology.backpressure.enable";
     /**
@@ -1239,7 +1239,7 @@ public class Config extends HashMap<String, Object> {
      * Configure the topology metrics reporters to be used on workers.
      * Use {@link Config#TOPOLOGY_METRICS_REPORTERS} instead.
      */
-    @Deprecated(forRemoval = true, since = "2.0.0")
+    @Deprecated
     @IsListEntryCustom(entryValidatorClasses = { MetricReportersValidator.class })
     public static final String STORM_METRICS_REPORTERS = "storm.metrics.reporters";
 
@@ -1270,7 +1270,7 @@ public class Config extends HashMap<String, Object> {
      * (by calling {@link #getBlobstoreHDFSPrincipal(Map conf)} method).
      * Note: Use {@link Config#STORM_HDFS_LOGIN_PRINCIPAL} instead.
      */
-    @Deprecated(forRemoval = true, since = "2.0.0")
+    @Deprecated
     @IsString
     public static final String BLOBSTORE_HDFS_PRINCIPAL = "blobstore.hdfs.principal";
     /**

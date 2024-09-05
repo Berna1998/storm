@@ -153,7 +153,7 @@ public interface IStormClusterState {
      * Get backpressure topologies.
      * Note: In Storm 2.0. Retained for enabling transition from 1.x. Will be removed soon.
      */
-    @Deprecated(forRemoval = true, since = "2.0.0")
+    @Deprecated
     List<String> backpressureTopologies();
 
     /**
@@ -181,28 +181,28 @@ public interface IStormClusterState {
      * Get topoloy backpressure.
      * Note: In Storm 2.0. Retained for enabling transition from 1.x. Will be removed soon.
      */
-    @Deprecated(forRemoval = true, since = "2.0.0")
+    @Deprecated
     boolean topologyBackpressure(String stormId, long timeoutMs, Runnable callback);
 
     /**
      * Setup backpressure.
      * Note: In Storm 2.0. Retained for enabling transition from 1.x. Will be removed soon.
      */
-    @Deprecated(forRemoval = true, since = "2.0.0")
+    @Deprecated
     void setupBackpressure(String stormId, Map<String, Object> topoConf);
 
     /**
      * Remove backpressure.
      * Note: In Storm 2.0. Retained for enabling transition from 1.x. Will be removed soon.
      */
-    @Deprecated(forRemoval = true, since = "2.0.0")
+    @Deprecated
     void removeBackpressure(String stormId);
 
     /**
      * Remove worker backpressure.
      * Note: In Storm 2.0. Retained for enabling transition from 1.x. Will be removed soon.
      */
-    @Deprecated(forRemoval = true, since = "2.0.0")
+    @Deprecated
     void removeWorkerBackpressure(String stormId, String node, Long port);
 
     void activateStorm(String stormId, StormBase stormBase, Map<String, Object> topoConf);

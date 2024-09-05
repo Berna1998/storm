@@ -31,7 +31,30 @@
     <name>Storm Client</name>
     <description>The client side (including worker) of Storm implementations.</description>
 
+    <properties>
+        <ba-dua.version>0.6.0</ba-dua.version>
+    </properties>
+
     <dependencies>
+<!--
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.8.0</version>
+            <scope>test</scope>
+        </dependency>  -->
+
+        <dependency>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-maven</artifactId>
+            <version>1.14.1</version>
+            <type>maven-plugin</type>
+        </dependency>
+        <dependency>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-junit5-plugin</artifactId>
+            <version>1.2.0</version>
+        </dependency>
         <!-- logging -->
 
         <!--Hadoop Mini Cluster cannot use log4j2 bridge,
@@ -121,6 +144,50 @@
             <artifactId>mockito-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>json-smart</artifactId>
+            <version>2.4.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>ba-dua-cli</artifactId>
+            <version>${ba-dua.version}</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/com/example/ba-dua-cli/ba-dua-cli-${ba-dua.version}-all.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>ba-dua-agent-rt</artifactId>
+            <version>${ba-dua.version}</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/com/example/ba-dua-agent-rt/ba-dua-agent-rt-${ba-dua.version}-all.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>ba-dua-agent</artifactId>
+            <version>${ba-dua.version}</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/com/example/ba-dua-agent/ba-dua-agent-${ba-dua.version}.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>ba-dua-core</artifactId>
+            <version>${ba-dua.version}</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/com/example/ba-dua-core/ba-dua-core-${ba-dua.version}.jar</systemPath>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -161,6 +228,30 @@
             </testResource>
         </testResources>
         <plugins>
+
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.14.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>mutationCoverage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                   <targetClasses>
+                        <param>org.apache.storm.utils.ObjectReader</param>
+                        <param>org.apache.storm.coordination.CoordinatedBolt</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>org.apache.storm.utils.ObjectReaderTest</param>
+                        <param>org.apache.storm.coordination.CoordinatedBoltTest</param>
+                    </targetTests>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
@@ -259,6 +350,60 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
             </plugin>
+
+            <!--  BADUA
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <argLine>
+                        -javaagent:${project.basedir}/lib/com/example/ba-dua-agent-rt/ba-dua-agent-rt-${ba-dua.version}-all.jar
+                        -Doutput.file=${project.build.directory}/coverage.ser
+                    </argLine>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                            <phase>verify</phase>
+                        <configuration>
+                            <executable>java</executable>
+                            <arguments>
+                                <argument>-jar</argument>
+                                <argument>${project.basedir}/lib/com/example/ba-dua-cli/ba-dua-cli-${ba-dua.version}-all.jar</argument>
+                                <argument>report</argument>
+                                <argument>-classes</argument>
+                                <argument>${project.build.directory}/classes</argument>
+                                <argument>-input</argument>
+                                <argument>${project.build.directory}/coverage.ser</argument>
+                                <argument>-show-classes</argument>
+                                <argument>-show-methods</argument>
+                                <argument>-xml</argument>
+                                <argument>${project.build.directory}/badua.xml</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>  -->
+
+
+
+
         </plugins>
     </build>
     <profiles>
@@ -274,27 +419,6 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <configuration>
-                                    <executable>python3</executable>
-                                    <workingDirectory>test/py</workingDirectory>
-                                    <arguments>
-                                        <argument>test_storm_cli.py</argument>
-                                    </arguments>
-                                    <environmentVariables>
-                                        <PYTHONPATH>../../../bin:$PYTHONPATH</PYTHONPATH>
-                                        <PYTHONDONTWRITEBYTECODE>true</PYTHONDONTWRITEBYTECODE>
-                                    </environmentVariables>
-                                    <skip>${skipTests}</skip>
-                                </configuration>
-                                <id>python3-test</id>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.storm</groupId>
@@ -321,5 +445,68 @@
                 </plugins>
             </build>
         </profile>
+
+
+        <!-- BADUA PROFILE -->
+        <profile>
+            <id>BaDua</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <argLine>
+                                -javaagent:${project.basedir}/lib/com/example/ba-dua-agent-rt/ba-dua-agent-rt-${ba-dua.version}-all.jar
+                                -Doutput.file=${project.build.directory}/coverage.ser
+                            </argLine>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.5.0</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <phase>verify</phase>
+                                <configuration>
+                                    <executable>java</executable>
+                                    <arguments>
+                                        <argument>-jar</argument>
+                                        <argument>${project.basedir}/lib/com/example/ba-dua-cli/ba-dua-cli-${ba-dua.version}-all.jar</argument>
+                                        <argument>report</argument>
+                                        <argument>-classes</argument>
+                                        <argument>${project.build.directory}/classes</argument>
+                                        <argument>-input</argument>
+                                        <argument>${project.build.directory}/coverage.ser</argument>
+                                        <argument>-show-classes</argument>
+                                        <argument>-show-methods</argument>
+                                        <argument>-xml</argument>
+                                        <argument>${project.build.directory}/badua.xml</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+
+                </plugins>
+            </build>
+        </profile>
+
     </profiles>
 </project>

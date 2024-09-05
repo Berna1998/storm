@@ -33,7 +33,7 @@ public class SequenceFileReader<KeyT extends Writable, ValueT extends Writable> 
     private static final int DEFAULT_BUFF_SIZE = 4096;
     private final SequenceFile.Reader reader;
 
-    private final SequenceFileReader.Offset offset;
+    private final Offset offset;
 
 
     private final KeyT key;
@@ -47,14 +47,14 @@ public class SequenceFileReader<KeyT extends Writable, ValueT extends Writable> 
         this.reader = new SequenceFile.Reader(fs.getConf(), SequenceFile.Reader.file(file), SequenceFile.Reader.bufferSize(bufferSize));
         this.key = (KeyT) ReflectionUtils.newInstance(reader.getKeyClass(), fs.getConf());
         this.value = (ValueT) ReflectionUtils.newInstance(reader.getValueClass(), fs.getConf());
-        this.offset = new SequenceFileReader.Offset(0, 0, 0);
+        this.offset = new Offset(0, 0, 0);
     }
 
     public SequenceFileReader(FileSystem fs, Path file, Map<String, Object> conf, String offset)
         throws IOException {
         super(fs, file);
         int bufferSize = !conf.containsKey(BUFFER_SIZE) ? DEFAULT_BUFF_SIZE : Integer.parseInt(conf.get(BUFFER_SIZE).toString());
-        this.offset = new SequenceFileReader.Offset(offset);
+        this.offset = new Offset(offset);
         this.reader = new SequenceFile.Reader(fs.getConf(), SequenceFile.Reader.file(file), SequenceFile.Reader.bufferSize(bufferSize));
         this.key = (KeyT) ReflectionUtils.newInstance(reader.getKeyClass(), fs.getConf());
         this.value = (ValueT) ReflectionUtils.newInstance(reader.getValueClass(), fs.getConf());

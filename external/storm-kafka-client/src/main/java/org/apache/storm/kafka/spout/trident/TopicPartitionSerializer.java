@@ -37,7 +37,7 @@ public class TopicPartitionSerializer {
 
     /**
      * Deserializes the given map into a TopicPartition. The map keys are expected to be those produced by
-     * {@link #toMap(org.apache.kafka.common.TopicPartition)}.
+     * {@link #toMap(TopicPartition)}.
      */
     public TopicPartition fromMap(Map<String, Object> map) {
         return new TopicPartition((String) map.get(TOPIC_PARTITION_TOPIC_KEY),

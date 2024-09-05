@@ -435,7 +435,7 @@ public class HiveWriter {
     /**
      * Simple interface whose <tt>call</tt> method is called by
      * {#callWithTimeout} in a new thread inside a
-     * {@linkplain java.security.PrivilegedExceptionAction#run()} call.
+     * {@linkplain PrivilegedExceptionAction#run()} call.
      */
     private interface CallRunner<T> {
         T call() throws Exception;

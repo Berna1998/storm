@@ -33,17 +33,17 @@ public class TextFileReader extends AbstractFileReader {
     private static final int DEFAULT_BUFF_SIZE = 4096;
     private static final Logger LOG = LoggerFactory.getLogger(TextFileReader.class);
     private BufferedReader reader;
-    private TextFileReader.Offset offset;
+    private Offset offset;
 
     public TextFileReader(FileSystem fs, Path file, Map<String, Object> conf) throws IOException {
-        this(fs, file, conf, new TextFileReader.Offset(0, 0));
+        this(fs, file, conf, new Offset(0, 0));
     }
 
     public TextFileReader(FileSystem fs, Path file, Map<String, Object> conf, String startOffset) throws IOException {
-        this(fs, file, conf, new TextFileReader.Offset(startOffset));
+        this(fs, file, conf, new Offset(startOffset));
     }
 
-    private TextFileReader(FileSystem fs, Path file, Map<String, Object> conf, TextFileReader.Offset startOffset)
+    private TextFileReader(FileSystem fs, Path file, Map<String, Object> conf, Offset startOffset)
         throws IOException {
         super(fs, file);
         offset = startOffset;

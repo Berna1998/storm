@@ -171,6 +171,7 @@ public class CoordinatedBolt implements IRichBolt {
         Object id = tuple.getValue(0);
         TrackingInfo track;
         TupleType type = getTupleType(tuple);
+
         synchronized (tracked) {
             track = tracked.get(id);
             if (track == null) {

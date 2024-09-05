@@ -63,7 +63,7 @@ public class ByTopicRecordTranslator<K, V> implements RecordTranslator<K, V> {
     /**
      * Create a record translator with the given default translator.
      * @param defaultTranslator a translator that will be used for all topics not explicitly set
-     *     with one of the variants of {@link #forTopic(java.lang.String, org.apache.storm.kafka.spout.RecordTranslator) }.
+     *     with one of the variants of {@link #forTopic(String, RecordTranslator) }.
      */
     public ByTopicRecordTranslator(RecordTranslator<K, V> defaultTranslator) {
         this.defaultTranslator = defaultTranslator;

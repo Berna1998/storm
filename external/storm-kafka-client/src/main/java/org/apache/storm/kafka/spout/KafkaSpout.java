@@ -133,7 +133,7 @@ public class KafkaSpout<K, V> extends BaseRichSpout {
 
         tupleListener = kafkaSpoutConfig.getTupleListener();
 
-        if (kafkaSpoutConfig.getProcessingGuarantee() != KafkaSpoutConfig.ProcessingGuarantee.AT_MOST_ONCE) {
+        if (kafkaSpoutConfig.getProcessingGuarantee() != ProcessingGuarantee.AT_MOST_ONCE) {
             // In at-most-once mode the offsets are committed after every poll, and not periodically as controlled by the timer
             commitTimer = new Timer(TIMER_DELAY_MS, kafkaSpoutConfig.getOffsetsCommitPeriodMs(), TimeUnit.MILLISECONDS);
         }
@@ -166,7 +166,7 @@ public class KafkaSpout<K, V> extends BaseRichSpout {
     }
 
     private boolean isAtLeastOnceProcessing() {
-        return kafkaSpoutConfig.getProcessingGuarantee() == KafkaSpoutConfig.ProcessingGuarantee.AT_LEAST_ONCE;
+        return kafkaSpoutConfig.getProcessingGuarantee() == ProcessingGuarantee.AT_LEAST_ONCE;
     }
 
     // =========== Consumer Rebalance Listener - On the same thread as the caller ===========
@@ -362,7 +362,7 @@ public class KafkaSpout<K, V> extends BaseRichSpout {
             final int numPolledRecords = consumerRecords.count();
             LOG.debug("Polled [{}] records from Kafka",
                 numPolledRecords);
-            if (kafkaSpoutConfig.getProcessingGuarantee() == KafkaSpoutConfig.ProcessingGuarantee.AT_MOST_ONCE) {
+            if (kafkaSpoutConfig.getProcessingGuarantee() == ProcessingGuarantee.AT_MOST_ONCE) {
                 //Commit polled records immediately to ensure delivery is at-most-once.
                 Map<TopicPartition, OffsetAndMetadata> offsetsToCommit =
                     createFetchedOffsetsMetadata(consumer.assignment());
@@ -499,7 +499,7 @@ public class KafkaSpout<K, V> extends BaseRichSpout {
 
     private void commitOffsetsForAckedTuples() {
         final Map<TopicPartition, OffsetAndMetadata> nextCommitOffsets = new HashMap<>();
-        for (Map.Entry<TopicPartition, OffsetManager> tpOffset : offsetManagers.entrySet()) {
+        for (Entry<TopicPartition, OffsetManager> tpOffset : offsetManagers.entrySet()) {
             final OffsetAndMetadata nextCommitOffset = tpOffset.getValue().findNextCommitOffset(commitMetadataManager.getCommitMetadata());
             if (nextCommitOffset != null) {
                 nextCommitOffsets.put(tpOffset.getKey(), nextCommitOffset);
@@ -512,7 +512,7 @@ public class KafkaSpout<K, V> extends BaseRichSpout {
             LOG.debug("Offsets successfully committed to Kafka [{}]", nextCommitOffsets);
             // Instead of iterating again, it would be possible to commit and update the state for each TopicPartition
             // in the prior loop, but the multiple network calls should be more expensive than iterating twice over a small loop
-            for (Map.Entry<TopicPartition, OffsetAndMetadata> tpOffset : nextCommitOffsets.entrySet()) {
+            for (Entry<TopicPartition, OffsetAndMetadata> tpOffset : nextCommitOffsets.entrySet()) {
                 //Update the OffsetManager for each committed partition, and update numUncommittedOffsets
                 final TopicPartition tp = tpOffset.getKey();
                 long position = consumer.position(tp);

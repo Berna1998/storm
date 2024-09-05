@@ -26,7 +26,7 @@ import org.apache.storm.kafka.spout.KafkaSpoutConfig.Builder;
 import org.apache.storm.tuple.Fields;
 
 /**
- * Translate a {@link org.apache.kafka.clients.consumer.ConsumerRecord} to a tuple.
+ * Translate a {@link ConsumerRecord} to a tuple.
  */
 public interface RecordTranslator<K, V> extends Serializable, Func<ConsumerRecord<K, V>, List<Object>> {
     List<String> DEFAULT_STREAM = Collections.singletonList("default");
