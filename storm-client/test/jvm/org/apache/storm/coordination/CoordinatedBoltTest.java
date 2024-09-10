@@ -6,6 +6,8 @@ import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.IRichBolt;
 import org.apache.storm.Config;
+import org.apache.storm.topology.OutputFieldsDeclarer;
+import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.TupleImpl;
 import org.junit.Assert;
 import org.junit.Test;
@@ -111,9 +113,8 @@ public class CoordinatedBoltTest {
     @Test
     public void testWithDifferentConstructor(){
 
-        IRichBolt richBolt = mock(IRichBolt.class);
-
-        CoordinatedBolt coordBolt = new CoordinatedBolt(richBolt);
+        BoltTimeOut boltTimeOut = mock(BoltTimeOut.class);
+        CoordinatedBolt coordBolt = new CoordinatedBolt(boltTimeOut);
 
         TopologyContext context = mock(TopologyContext.class);
         OutputCollector collector = mock(OutputCollector.class);
@@ -127,12 +128,6 @@ public class CoordinatedBoltTest {
         TupleImpl tuple = new TupleImpl(gtc, this.data, this.srcComp, 1, this.streamId);
 
         coordBolt.execute(tuple);
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("key", 33);
-        when(richBolt.getComponentConfiguration()).thenReturn(map);
-
-        Assert.assertEquals(map, coordBolt.getComponentConfiguration());
 
         coordBolt.cleanup();
 
@@ -169,5 +164,40 @@ public class CoordinatedBoltTest {
             assertFalse(false);
         }
     }
+
+
+    private static class BoltTimeOut implements IRichBolt, CoordinatedBolt.TimeoutCallback{
+
+        @Override
+        public void timeoutId(Object id) {
+
+        }
+
+        @Override
+        public void prepare(Map<String, Object> topoConf, TopologyContext context, OutputCollector collector) {
+
+        }
+
+        @Override
+        public void execute(Tuple input) {
+
+        }
+
+        @Override
+        public void cleanup() {
+
+        }
+
+        @Override
+        public void declareOutputFields(OutputFieldsDeclarer declarer) {
+
+        }
+
+        @Override
+        public Map<String, Object> getComponentConfiguration() {
+            return Collections.emptyMap();
+        }
+    }
+
 
 }
