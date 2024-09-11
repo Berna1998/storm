@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
+
 
 @RunWith(value = Parameterized.class)
 public class ObjectReaderTest {
@@ -38,7 +38,6 @@ public class ObjectReaderTest {
     }
 
 
-
     @Parameterized.Parameters
     public static Collection returnParams() {
         Collection<String> stringCollection = new ArrayList<>();
@@ -55,8 +54,6 @@ public class ObjectReaderTest {
     @Test
     public void checkTests(){
         if(this.type == 1){
-            //TEST CHE VANNO A BUON FINE
-
             //Right List String
             List<String> lis = new ArrayList<>();
             lis.add("Hello");
@@ -101,8 +98,6 @@ public class ObjectReaderTest {
             assertFalse(ObjectReader.getBoolean(this.checkBool, true));
 
         }else if(this.type == 2){
-            //TEST CHE VANNO MALE
-
             //Valori diversi
             //String che ritorna il defaultValue se null
             assertEquals("default", ObjectReader.getString(this.becomeString, "default"));
