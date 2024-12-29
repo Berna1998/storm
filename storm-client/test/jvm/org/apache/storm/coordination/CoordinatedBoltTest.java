@@ -80,6 +80,11 @@ public class CoordinatedBoltTest {
 
     }
 
+    @Test
+    public void empty(){
+
+    }
+
     private static class BoltTimeOut implements IRichBolt, CoordinatedBolt.TimeoutCallback{
 
         @Override

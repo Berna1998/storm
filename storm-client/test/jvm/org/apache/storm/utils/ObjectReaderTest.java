@@ -37,7 +37,6 @@ public class ObjectReaderTest {
         this.stayString = stayStrig;
     }
 
-
     @Parameterized.Parameters
     public static Collection returnParams() {
         Collection<String> stringCollection = new ArrayList<>();
@@ -49,6 +48,11 @@ public class ObjectReaderTest {
                 {3,null,22,(long) 33,"",3,null,""}
 
         });
+    }
+
+    @Test
+    public void empty(){
+
     }
 
 
