@@ -51,8 +51,38 @@ public class ObjectReaderTest {
     }
 
     @Test
-    public void empty(){
+    public void checkTests(){
+        if(this.type == 1){
 
+            //Right String with default
+            String s = "string";
+            assertEquals(s, ObjectReader.getString(this.stayString, null));
+
+            //Right Int con default
+            int num2 = 33;
+            assertEquals(num2, ObjectReader.getInt(this.becomeInt,0));
+
+            long numL = 11;
+            //Right Long con default
+            assertEquals(numL, ObjectReader.getLong(this.becomeLong,(long) 0));
+
+        }else if(this.type == 2){
+            //Valori diversi
+            //String che ritorna il defaultValue se null
+            assertEquals("default", ObjectReader.getString(this.becomeString, "default"));
+
+            long valLong = 0;
+            assertEquals(valLong,ObjectReader.getLong(this.becomeLong,(long)0));
+
+            //Exception con String e default
+            assertThrows(Exception.class, () -> {
+                ObjectReader.getString(this.stringColl,null);
+            });
+
+            assertEquals(0,ObjectReader.getInt(this.becomeInt,0));
+
+
+        }
     }
 
 

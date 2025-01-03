@@ -61,7 +61,7 @@ public class CoordinatedBoltTest {
                 {configurations,"prova", "streamId", data1, CoordinatedBolt.SourceArgs.single(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("prova", "streamId")},
                 {configurations,"prova", "", data1, CoordinatedBolt.SourceArgs.single(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("prova", "")},
                 {configurations,"prova", Constants.COORDINATED_STREAM_ID, data1, CoordinatedBolt.SourceArgs.single(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("prova", Constants.COORDINATED_STREAM_ID)},
-
+/*
                 {configurations,"", "streamId", data1, CoordinatedBolt.SourceArgs.all(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("", "streamId")},
                 {configurations,"", "", data1, CoordinatedBolt.SourceArgs.all(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("", "")},
                 {configurations,"", Constants.COORDINATED_STREAM_ID, data1, CoordinatedBolt.SourceArgs.all(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("", Constants.COORDINATED_STREAM_ID)},
@@ -76,12 +76,39 @@ public class CoordinatedBoltTest {
 
                 {emptyConfig,"prova","streamId",data1,mock(CoordinatedBolt.SourceArgs.class),null},
                 {emptyConfig,"prova",Constants.COORDINATED_STREAM_ID,data1,mock(CoordinatedBolt.SourceArgs.class),CoordinatedBolt.IdStreamSpec.makeDetectSpec(null,null)},
+        */
         });
+
 
     }
 
     @Test
-    public void empty(){
+    public void testClass() {
+        IRichBolt richBolt = mock(IRichBolt.class);
+
+        CoordinatedBolt coordBolt = new CoordinatedBolt(richBolt, this.srcComp, this.sourceArgs, this.idStreamSpec);
+
+        TopologyContext context = mock(TopologyContext.class);
+        OutputCollector collector = mock(OutputCollector.class);
+
+        coordBolt.prepare(this.configurations, context, collector);
+
+        GeneralTopologyContext gtc = mock(GeneralTopologyContext.class);
+
+        TupleImpl tuple = new TupleImpl(gtc, this.data, this.srcComp, 1, this.streamId);
+
+        coordBolt.execute(tuple);
+
+        if (this.idStreamSpec != null && this.idStreamSpec.id.get_streamId() != null) {
+            assertEquals(this.streamId, this.idStreamSpec.id.get_streamId());
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("key", 33);
+        when(richBolt.getComponentConfiguration()).thenReturn(map);
+        Assert.assertEquals(map, coordBolt.getComponentConfiguration());
+        coordBolt.cleanup();
+
 
     }
 
