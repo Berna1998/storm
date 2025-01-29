@@ -16,36 +16,30 @@ import static org.junit.jupiter.api.Assertions.*;
 @RunWith(value = Parameterized.class)
 public class ObjectReaderTest {
 
-    private final Object stringColl;
-    private final Object becomeString;
-    private final Object becomeInt;
-    private final Object becomeDouble;
-    private final Object becomeLong;
-    private final Object checkBool;
+
+    private final Object stringTest;
+    private final Object intTest;
+    private final Object longTest;
     private final int type;
-    private final Object stayString;
 
 
-    public ObjectReaderTest(int type, Object stringColl, Object becomeString, Object becomeInt, Object becomeDouble, Object becomeLong, Object checkBool, String stayStrig){
+
+    public ObjectReaderTest(int type, Object stringTest, Object intTest, Object longTest){
         this.type = type;
-        this.stringColl = stringColl;
-        this.becomeString = becomeString;
-        this.becomeInt = becomeInt;
-        this.becomeDouble = becomeDouble;
-        this.becomeLong = becomeLong;
-        this.checkBool = checkBool;
-        this.stayString = stayStrig;
+        this.stringTest = stringTest;
+        this.intTest = intTest;
+        this.longTest = longTest;
+
     }
 
     @Parameterized.Parameters
     public static Collection returnParams() {
-        Collection<String> stringCollection = new ArrayList<>();
-        stringCollection.add("Hello");
-        stringCollection.add("World");
+
         return Arrays.asList(new Object[][] {
-                {1,stringCollection, 44,"33",22,"11",11>12,"string"},
-                {2,33,null,null,null,null,null,""},
-                {3,null,22,(long) 33,"",3,null,""}
+                {1, "string", 33, 11},
+                {2, null, null, null},
+                {3, 33, "33", "22"},
+                {4, 33, (long) 33, "22"}
 
         });
     }
@@ -56,32 +50,66 @@ public class ObjectReaderTest {
 
             //Right String with default
             String s = "string";
-            assertEquals(s, ObjectReader.getString(this.stayString, null));
+            assertEquals(s, ObjectReader.getString(this.stringTest, null));
 
             //Right Int con default
             int num2 = 33;
-            assertEquals(num2, ObjectReader.getInt(this.becomeInt,0));
+            assertEquals(num2, ObjectReader.getInt(this.intTest,null));
 
             long numL = 11;
             //Right Long con default
-            assertEquals(numL, ObjectReader.getLong(this.becomeLong,(long) 0));
+            assertEquals(numL, ObjectReader.getLong(this.longTest,null));
+
 
         }else if(this.type == 2){
             //Valori diversi
             //String che ritorna il defaultValue se null
-            assertEquals("default", ObjectReader.getString(this.becomeString, "default"));
+            assertEquals("default", ObjectReader.getString(this.stringTest, "default"));
 
-            long valLong = 0;
-            assertEquals(valLong,ObjectReader.getLong(this.becomeLong,(long)0));
+           // long valLong = 0;
+            assertEquals(null,ObjectReader.getLong(this.longTest,null));
 
-            //Exception con String e default
-            assertThrows(Exception.class, () -> {
-                ObjectReader.getString(this.stringColl,null);
+
+            assertEquals(null,ObjectReader.getInt(this.intTest,null));
+
+
+        } else if (this.type == 3) {
+            //Exception con valore diverso da string
+            assertThrows(IllegalArgumentException.class, () -> {
+                ObjectReader.getString(this.stringTest,null);
             });
 
-            assertEquals(0,ObjectReader.getInt(this.becomeInt,0));
+            //converte valore che è una stringa
+            assertEquals(33,ObjectReader.getInt(this.intTest,null));
+
+            //converte valore che è una stringa
+            assertEquals(22,ObjectReader.getLong(this.longTest,null));
 
 
+            //converte valore che è un long in int
+            long value = 33;
+            assertEquals(33,ObjectReader.getInt(value,null));
+
+            //Exception con valore che getInt non sa gestire
+            assertThrows(IllegalArgumentException.class, () -> {
+                ObjectReader.getInt((double) 22,null);
+            });
+
+            //Exception con valore che getLong non sa gestire
+            assertThrows(IllegalArgumentException.class, () -> {
+                ObjectReader.getLong(true,null);
+            });
+
+        } else if (this.type == 4) {
+            //MAX E MINN
+            //Exception con valore che getLong non sa gestire
+            assertThrows(IllegalArgumentException.class, () -> {
+                ObjectReader.getInt((long)Integer.MAX_VALUE+1,null);
+            });
+
+            assertThrows(IllegalArgumentException.class, () -> {
+                ObjectReader.getInt((long)Integer.MIN_VALUE-1,null);
+            });
         }
     }
 

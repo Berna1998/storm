@@ -61,22 +61,29 @@ public class CoordinatedBoltTest {
                 {configurations,"prova", "streamId", data1, CoordinatedBolt.SourceArgs.single(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("prova", "streamId")},
                 {configurations,"prova", "", data1, CoordinatedBolt.SourceArgs.single(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("prova", "")},
                 {configurations,"prova", Constants.COORDINATED_STREAM_ID, data1, CoordinatedBolt.SourceArgs.single(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("prova", Constants.COORDINATED_STREAM_ID)},
-/*
+
+
                 {configurations,"", "streamId", data1, CoordinatedBolt.SourceArgs.all(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("", "streamId")},
                 {configurations,"", "", data1, CoordinatedBolt.SourceArgs.all(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("", "")},
                 {configurations,"", Constants.COORDINATED_STREAM_ID, data1, CoordinatedBolt.SourceArgs.all(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("", Constants.COORDINATED_STREAM_ID)},
 
+                {null,null, "", dataNull, CoordinatedBolt.SourceArgs.single(), null},
+
+                //DA QUI IN POI ALTRE IMPL, SOPRA BASE
+
+/*
                 {configurations,"","streamId",data1,mock(CoordinatedBolt.SourceArgs.class),CoordinatedBolt.IdStreamSpec.makeDetectSpec(null,null)},
                 {configurations,"","",data1,mock(CoordinatedBolt.SourceArgs.class),CoordinatedBolt.IdStreamSpec.makeDetectSpec(null,null)},
                 {null,"","",data1,mock(CoordinatedBolt.SourceArgs.class),CoordinatedBolt.IdStreamSpec.makeDetectSpec(null,null)},
                 {null,"prova","streamId",data1,mock(CoordinatedBolt.SourceArgs.class),null},
                 {null,"prova",Constants.COORDINATED_STREAM_ID,data1,mock(CoordinatedBolt.SourceArgs.class),CoordinatedBolt.IdStreamSpec.makeDetectSpec(null,null)},
-                {null,null, "", dataNull, CoordinatedBolt.SourceArgs.single(), null},
+                */
 
 
+/*
                 {emptyConfig,"prova","streamId",data1,mock(CoordinatedBolt.SourceArgs.class),null},
                 {emptyConfig,"prova",Constants.COORDINATED_STREAM_ID,data1,mock(CoordinatedBolt.SourceArgs.class),CoordinatedBolt.IdStreamSpec.makeDetectSpec(null,null)},
-        */
+*/
         });
 
 
