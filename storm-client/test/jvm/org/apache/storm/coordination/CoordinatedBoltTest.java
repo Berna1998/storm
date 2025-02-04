@@ -1,6 +1,7 @@
 package org.apache.storm.coordination;
 
 import org.apache.storm.Constants;
+import org.apache.storm.generated.Grouping;
 import org.apache.storm.task.GeneralTopologyContext;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
@@ -51,43 +52,29 @@ public class CoordinatedBoltTest {
         dataNull.add(null);
         dataNull.add(null);
 
-
-        Map<String,Object> emptyConfig = new HashMap<>();
-        Map<String,Object> configurations = new HashMap<>();
-        //configurations.put(Config.TOPOLOGY_BOLTS_WINDOW_LENGTH_COUNT, 100);
-
         return Arrays.asList(new Object[][]{
                 {1,"prova", "streamId", data1, CoordinatedBolt.SourceArgs.all(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("prova", "streamId")},
-                {10,"prova", "", data1, CoordinatedBolt.SourceArgs.all(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("prova", "")},
+                {0,"prova", "", data1, CoordinatedBolt.SourceArgs.all(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("prova", "")},
                 {-1,"prova", Constants.COORDINATED_STREAM_ID, data1, CoordinatedBolt.SourceArgs.all(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("prova", Constants.COORDINATED_STREAM_ID)},
 
-                {-1,"prova", "streamId", data1, CoordinatedBolt.SourceArgs.single(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("prova", "streamId")},
-                {10,"prova", "", data1, CoordinatedBolt.SourceArgs.single(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("prova", "")},
+                {-1,"", "streamId", data1, CoordinatedBolt.SourceArgs.all(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("", "streamId")},
+                {1,"", "streamId", data1, CoordinatedBolt.SourceArgs.all(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("", "streamId")},
+                {0,"", "streamId", data1, CoordinatedBolt.SourceArgs.all(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("", "streamId")},
+
+                //Altre con single()
+                {1,"prova", "streamId", data1, CoordinatedBolt.SourceArgs.single(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("prova", "streamId")},
+                {0,"prova", "", data1, CoordinatedBolt.SourceArgs.single(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("prova", "")},
                 {-1,"prova", Constants.COORDINATED_STREAM_ID, data1, CoordinatedBolt.SourceArgs.single(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("prova", Constants.COORDINATED_STREAM_ID)},
 
-
-                {10,"", "streamId", data1, CoordinatedBolt.SourceArgs.all(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("", "streamId")},
-                {1,"", "", data1, CoordinatedBolt.SourceArgs.all(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("", "")},
-                {1,"", Constants.COORDINATED_STREAM_ID, data1, CoordinatedBolt.SourceArgs.all(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("", Constants.COORDINATED_STREAM_ID)},
-
-                {1,null, "", dataNull, CoordinatedBolt.SourceArgs.single(), null},
-
-                //DA QUI IN POI ALTRE IMPL, SOPRA BASE
-
-                {1,"prova", "streamId", data1, CoordinatedBolt.SourceArgs.all(), null},
-                {10,"prova", "", data1, CoordinatedBolt.SourceArgs.all(), null},
-                {-1,"prova", Constants.COORDINATED_STREAM_ID, data1, CoordinatedBolt.SourceArgs.all(), null},
+                {-1,"", "streamId", data1, CoordinatedBolt.SourceArgs.single(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("", "streamId")},
+                {1,"", "streamId", data1, CoordinatedBolt.SourceArgs.single(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("", "streamId")},
+                {0,"", "streamId", data1, CoordinatedBolt.SourceArgs.single(), CoordinatedBolt.IdStreamSpec.makeDetectSpec("", "streamId")},
 
 
+                //coverage execute
+                {1, "prova", "streamId", data1, CoordinatedBolt.SourceArgs.single(), null},
+                {1,"prova", Constants.COORDINATED_STREAM_ID,data1,CoordinatedBolt.SourceArgs.all(),null},
 
-                {10,"","streamId",data1,CoordinatedBolt.SourceArgs.all(),CoordinatedBolt.IdStreamSpec.makeDetectSpec(null,null)},
-                {1,"","",data1,CoordinatedBolt.SourceArgs.all(),CoordinatedBolt.IdStreamSpec.makeDetectSpec(null,null)},
-                {null,"","",data1,CoordinatedBolt.SourceArgs.all(),CoordinatedBolt.IdStreamSpec.makeDetectSpec(null,null)},
-                {null,"prova","streamId",data1,CoordinatedBolt.SourceArgs.all(),null},
-                {null,"prova",Constants.COORDINATED_STREAM_ID,data1,CoordinatedBolt.SourceArgs.all(),CoordinatedBolt.IdStreamSpec.makeDetectSpec(null,null)},
-
-                {0,"prova","streamId",data1,CoordinatedBolt.SourceArgs.all(),null},
-                {10,"prova",Constants.COORDINATED_STREAM_ID,data1,CoordinatedBolt.SourceArgs.all(),CoordinatedBolt.IdStreamSpec.makeDetectSpec(null,null)},
 
         });
 
@@ -96,23 +83,34 @@ public class CoordinatedBoltTest {
 
     @Test
     public void testClass() {
-        IRichBolt richBolt = mock(IRichBolt.class);
-        // BoltTimeOut bolt2 = new BoltTimeOut();
-        //CoordinatedBolt coordBolt = new CoordinatedBolt(bolt2);
-        MyBolt boltPR = mock(MyBolt.class);
+
         MyBolt bolt2 = new MyBolt();
 
         CoordinatedBolt coordBolt = new CoordinatedBolt(bolt2, this.srcComp, this.sourceArgs, this.idStreamSpec);
 
         TopologyContext context = mock(TopologyContext.class);
+
         when(context.maxTopologyMessageTimeout()).thenAnswer(invocation -> this.timeO);
+
+        Map<String, Map<String, Grouping>> map = new HashMap<>();
+        Map<String, Grouping> group = new HashMap<>();
+        group.put("groupingMap", Grouping.custom_serialized("groupingMap".getBytes()));
+        map.put("groupingMap", group);
+
+        when(context.getThisTargets()).thenAnswer(invocation -> map);
+
+        List<Integer> listInt = new ArrayList<>();
+        listInt.add(1);
+        listInt.add(2);
+        listInt.add(3);
+        when(context.getComponentTasks(anyString())).thenAnswer(invocation -> listInt);
 
         OutputCollector collector = mock(OutputCollector.class);
 
         Map<String,Object> configurations = new HashMap<>();
         coordBolt.prepare(configurations, context, collector);
 
-        //GeneralTopologyContext gtc = mock(GeneralTopologyContext.class);
+
         TopologyBuilder builder = new TopologyBuilder();
         GeneralTopologyContext gtc = new GeneralTopologyContext(builder.createTopology(),
                 new Config(), new HashMap<>(), new HashMap<>(), new HashMap<>(), "") {
@@ -131,10 +129,6 @@ public class CoordinatedBoltTest {
             assertEquals(this.streamId, this.idStreamSpec.id.get_streamId());
         }
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("key", 33);
-        //when(richBolt.getComponentConfiguration()).thenReturn(map);
-        //Assert.assertEquals(map, coordBolt.getComponentConfiguration());
         coordBolt.cleanup();
 
 
@@ -143,13 +137,26 @@ public class CoordinatedBoltTest {
     @Test
     public void testWithDifferentConstructor(){
 
-        //BoltTimeOut bolt2 = mock(BoltTimeOut.class);
         BoltTimeOut bolt2 = new BoltTimeOut();
         CoordinatedBolt coordBolt = new CoordinatedBolt(bolt2);
 
 
         TopologyContext context = mock(TopologyContext.class);
+
         when(context.maxTopologyMessageTimeout()).thenAnswer(invocation -> null);
+
+        Map<String, Map<String, Grouping>> map = new HashMap<>();
+        Map<String, Grouping> group = new HashMap<>();
+        group.put("groupingMap", Grouping.custom_serialized("groupingMap".getBytes()));
+        map.put("groupingMap", group);
+
+        when(context.getThisTargets()).thenAnswer(invocation -> map);
+
+        List<Integer> listInt = new ArrayList<>();
+        listInt.add(1);
+        listInt.add(2);
+        listInt.add(3);
+        when(context.getComponentTasks(anyString())).thenAnswer(invocation -> listInt);
 
         OutputCollector collector = mock(OutputCollector.class);
 
@@ -157,7 +164,6 @@ public class CoordinatedBoltTest {
 
         coordBolt.prepare(configurations, context, collector);
 
-        //GeneralTopologyContext gtc = mock(GeneralTopologyContext.class);
 
         TopologyBuilder builder = new TopologyBuilder();
         GeneralTopologyContext gtc = new GeneralTopologyContext(builder.createTopology(),

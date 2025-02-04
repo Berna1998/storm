@@ -39,6 +39,8 @@ public class ObjectReaderTest {
                 {1, "string", 33, 11},
                 {2, null, null, null},
                 {3, 33, "33", "22"},
+
+                //Aggiuntivo
                 {4, 33, (long) 33, "22"}
 
         });
@@ -48,25 +50,22 @@ public class ObjectReaderTest {
     public void checkTests(){
         if(this.type == 1){
 
-            //Right String with default
             String s = "string";
             assertEquals(s, ObjectReader.getString(this.stringTest, null));
 
-            //Right Int con default
+
             int num2 = 33;
-            assertEquals(num2, ObjectReader.getInt(this.intTest,null));
+            assertEquals(num2, ObjectReader.getInt(this.intTest,0));
 
             long numL = 11;
-            //Right Long con default
+
             assertEquals(numL, ObjectReader.getLong(this.longTest,null));
 
 
         }else if(this.type == 2){
-            //Valori diversi
-            //String che ritorna il defaultValue se null
+
             assertEquals("default", ObjectReader.getString(this.stringTest, "default"));
 
-           // long valLong = 0;
             assertEquals(null,ObjectReader.getLong(this.longTest,null));
 
 
@@ -74,17 +73,27 @@ public class ObjectReaderTest {
 
 
         } else if (this.type == 3) {
-            //Exception con valore diverso da string
+
             assertThrows(IllegalArgumentException.class, () -> {
                 ObjectReader.getString(this.stringTest,null);
             });
 
-            //converte valore che è una stringa
+
             assertEquals(33,ObjectReader.getInt(this.intTest,null));
 
-            //converte valore che è una stringa
+
             assertEquals(22,ObjectReader.getLong(this.longTest,null));
 
+
+        } else if (this.type == 4) {
+
+            assertThrows(IllegalArgumentException.class, () -> {
+                ObjectReader.getInt((long)Integer.MAX_VALUE+1,null);
+            });
+
+            assertThrows(IllegalArgumentException.class, () -> {
+                ObjectReader.getInt((long)Integer.MIN_VALUE-1,null);
+            });
 
             //converte valore che è un long in int
             long value = 33;
@@ -98,17 +107,6 @@ public class ObjectReaderTest {
             //Exception con valore che getLong non sa gestire
             assertThrows(IllegalArgumentException.class, () -> {
                 ObjectReader.getLong(true,null);
-            });
-
-        } else if (this.type == 4) {
-            //MAX E MINN
-            //Exception con valore che getLong non sa gestire
-            assertThrows(IllegalArgumentException.class, () -> {
-                ObjectReader.getInt((long)Integer.MAX_VALUE+1,null);
-            });
-
-            assertThrows(IllegalArgumentException.class, () -> {
-                ObjectReader.getInt((long)Integer.MIN_VALUE-1,null);
             });
         }
     }
